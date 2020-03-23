@@ -1,6 +1,3 @@
-# import eventlet
-# eventlet.monkey_patch()
-
 from flask import Flask, send_file, request
 from flask_socketio import SocketIO, emit
 
@@ -20,10 +17,6 @@ def connect():
 def disconnect():
     print(f'[DISCONNECT] {request.sid}')
 
-@sio.on('ping')
-def ping(data):
-    print(f'[PING] {data}')
-
 if __name__ == '__main__':
-    # app.run(port=4000)
-    sio.run(app, port=4000)
+    app.run(port=4000)
+    # sio.run(app, port=4000)

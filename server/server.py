@@ -7,6 +7,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 sio = SocketIO(app)
+# bcrypt.generate_password_hash(pw).decode('UTF-8')
+# bcrypt.check_password_hash(hash, candidate)
 bcrypt = Bcrypt(app)
 
 client = MongoClient('mongodb://localhost:27017')

@@ -1,10 +1,14 @@
 from flask import Flask, send_file, request
 from flask_socketio import SocketIO, emit
+from pymongo import MongoClient
 
 from datetime import datetime
 
 app = Flask(__name__)
 sio = SocketIO(app)
+
+client = MongoClient('mongodb://localhost:27017')
+db = client['exil']
 
 def sprint(tag, message, timestamp=True):
     out = f'[{tag}'

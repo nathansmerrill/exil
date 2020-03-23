@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /home/merrilln/exil
+
+sed -i "s/port=4000/port=8021/" server/server.py
+sed -i "/localhost:4000/cs.catlin.edu:8021"

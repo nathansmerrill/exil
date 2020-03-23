@@ -2,6 +2,6 @@
 
 cd /home/merrilln/exil
 source venv/bin/activate
-server/server.py > server/server.log
+python server/server.py > server/server.log
 echo $! > server/server.pid
 echo '[EXIL]' Server Started

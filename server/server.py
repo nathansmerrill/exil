@@ -1,5 +1,3 @@
-#!/usr/bin/python3 -u
-
 # import eventlet
 # eventlet.monkey_patch()
 

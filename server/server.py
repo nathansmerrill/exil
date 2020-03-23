@@ -7,13 +7,10 @@ app = Flask(__name__)
 sio = SocketIO(app)
 
 def sprint(tag, message, timestamp=True):
-    out = '['
-    out += tag
+    out = f'[{tag}'
     if timestamp:
-        out += ' '
-        out += datetime.now().strftime("%d-%b-%Y %-I:%M:%S %p")
-    out += '] '
-    out += message
+        out += f' {datetime.now().strftime("%d-%b-%Y %-I:%M:%S %p")}'
+    out += f'] {message}'
     print(out)
 
 @app.route('/')
@@ -30,5 +27,6 @@ def disconnect():
     sprint('DISCONNECT', request.sid)
 
 if __name__ == '__main__':
+    sprint('SERVER', 'Initializing...')
     sio.run(app, port=4000)
     # app.run(port=4000)

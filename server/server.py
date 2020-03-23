@@ -15,7 +15,7 @@ def sprint(tag, message, timestamp=True):
 
 @app.route('/')
 @app.route('/<path:path>')
-def index(path = 'index.html'):
+def index(path='index.html'):
     return send_file(f'../public/{path}')
 
 @sio.on('connect')

@@ -1,11 +1,13 @@
 from flask import Flask, send_file, request
 from flask_socketio import SocketIO, emit
+from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
 
 from datetime import datetime
 
 app = Flask(__name__)
 sio = SocketIO(app)
+bcrypt = Bcrypt(app)
 
 client = MongoClient('mongodb://localhost:27017')
 db = client['exil']

@@ -18,5 +18,5 @@ def disconnect():
     print(f'[DISCONNECT] {request.sid}')
 
 if __name__ == '__main__':
-    app.run(port=4000)
-    # sio.run(app, port=4000)
+    sio.run(app, port=4000)
+    # app.run(port=4000)

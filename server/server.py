@@ -53,15 +53,18 @@ def login(data):
 '''
 0: Success
 1: User already exists
-2: Password is blank
+2: Username or password is blank
+3: Space in username
 '''
 @sio.on('register')
 def register(data):
     sprint('SIGNUP', data)
     if users.find_one({'username': data['username']}) is not None:
         emit('register', 1)
-    elif data['password'] == '':
+    elif data['username'] == '' or data['username'] == 'blank' or data['password'] == '' or data['password'] == 'blankb':
         emit('register', 2)
+    elif ' ' in data['username']:
+        emit('register', 3)
     else:
         users.insert_one({
             'username': data['username'],

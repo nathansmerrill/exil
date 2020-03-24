@@ -10,9 +10,9 @@ sio = SocketIO(app)
 # bcrypt.generate_password_hash(pw).decode('UTF-8')
 # bcrypt.check_password_hash(hash, candidate)
 bcrypt = Bcrypt(app)
-
 client = MongoClient('mongodb://localhost:27017')
 db = client['exil']
+users = db['users']
 
 def sprint(tag, message, timestamp=True):
     out = f'[{tag}'
@@ -33,6 +33,37 @@ def connect():
 @sio.on('disconnect')
 def disconnect():
     sprint('DISCONNECT', request.sid)
+
+@sio.on('login')
+def login(data):
+    sprint('LOGIN', data)
+    user = users.find_one({'username': data['username']})
+    if user is None:
+        emit('login', 'username')
+    else:
+        if bcrypt.check_password_hash(user['password'], data['password']):
+            emit('login', 'success')
+        else:
+            emit('login', 'password')
+
+'''
+0: Success
+1: User already exists
+2: Password is blank
+'''
+@sio.on('signup')
+def signup(data):
+    sprint('SIGNUP', data)
+    if users.find_one({'username': data['username']}) is not None:
+        emit('signup', 1)
+    elif data['password'] == '':
+        emit('signup', 2)
+    else:
+        users.insert_one({
+            'username': data['username'],
+            'password': bcrypt.generate_password_hash(data['password']).decode('UTF-8')
+        })
+        emit('signup', 0)
 
 if __name__ == '__main__':
     sprint('SERVER', 'Initializing...')

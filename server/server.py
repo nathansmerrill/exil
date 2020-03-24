@@ -63,7 +63,7 @@ def register(data):
     sprint('SIGNUP', data)
     if users.find_one({'username': data['username']}) is not None:
         emit('register', 1)
-    elif data['username'] == '' or data['username'] == 'blank' or data['password'] == '' or data['password'] == 'blankb':
+    elif data['username'] == '' or data['username'] == 'blank' or data['password'] == '' or data['password'] == 'blank':
         emit('register', 2)
     elif ' ' in data['username']:
         emit('register', 3)

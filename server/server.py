@@ -8,11 +8,9 @@ from datetime import datetime
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'd89c947658f73ff238867e61dfce7626'
 sio = SocketIO(app)
-# bcrypt.generate_password_hash(pw).decode('UTF-8')
-# bcrypt.check_password_hash(hash, candidate)
 bcrypt = Bcrypt(app)
-client = MongoClient('mongodb://localhost:27017')
-db = client['exil']
+mongo = MongoClient('mongodb://localhost:27017')
+db = mongo['exil']
 users = db['users']
 
 def sprint(tag, message, timestamp=True):

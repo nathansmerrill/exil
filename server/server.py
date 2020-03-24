@@ -55,6 +55,7 @@ def login(data):
 1: User already exists
 2: Username or password is blank
 3: Space in username
+4: Username > 24 characters
 '''
 @sio.on('register')
 def register(data):
@@ -65,6 +66,8 @@ def register(data):
         emit('register', 2)
     elif ' ' in data['username']:
         emit('register', 3)
+    elif len(data['username']) > 24:
+        emit('register', 4)
     else:
         users.insert_one({
             'username': data['username'],

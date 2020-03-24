@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from datetime import datetime
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'd89c947658f73ff238867e61dfce7626'
 sio = SocketIO(app)
 # bcrypt.generate_password_hash(pw).decode('UTF-8')
 # bcrypt.check_password_hash(hash, candidate)

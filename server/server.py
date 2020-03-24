@@ -55,19 +55,19 @@ def login(data):
 1: User already exists
 2: Password is blank
 '''
-@sio.on('signup')
-def signup(data):
+@sio.on('register')
+def register(data):
     sprint('SIGNUP', data)
     if users.find_one({'username': data['username']}) is not None:
-        emit('signup', 1)
+        emit('register', 1)
     elif data['password'] == '':
-        emit('signup', 2)
+        emit('register', 2)
     else:
         users.insert_one({
             'username': data['username'],
             'password': bcrypt.generate_password_hash(data['password']).decode('UTF-8')
         })
-        emit('signup', 0)
+        emit('register', 0)
 
 if __name__ == '__main__':
     sprint('SERVER', 'Initializing...')

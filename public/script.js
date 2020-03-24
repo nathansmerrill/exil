@@ -21,8 +21,8 @@ $('#game').hide().append(renderer.domElement);
 $('#loginButton').click(function() {
     socket.emit('login', getUsernamePassword());
 });
-$('#signupButton').click(function() {
-    socket.emit('signup', getUsernamePassword());
+$('#registerButton').click(function() {
+    socket.emit('register', getUsernamePassword());
 });
 
 function update() {

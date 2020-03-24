@@ -33,18 +33,22 @@ def connect():
 @sio.on('disconnect')
 def disconnect():
     sprint('DISCONNECT', request.sid)
-
+'''
+0: Success
+1: Username wrong
+2: Password wrong
+'''
 @sio.on('login')
 def login(data):
     sprint('LOGIN', data)
     user = users.find_one({'username': data['username']})
     if user is None:
-        emit('login', 'username')
+        emit('login', 1)
     else:
         if bcrypt.check_password_hash(user['password'], data['password']):
-            emit('login', 'success')
+            emit('login', 0)
         else:
-            emit('login', 'password')
+            emit('login', 2)
 
 '''
 0: Success

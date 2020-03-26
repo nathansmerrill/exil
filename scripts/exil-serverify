@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd /home/merrilln/exil
+cd $EXIL_DIR
 
 sed -i "s/d89c947658f73ff238867e61dfce7626/$(python3 -c 'import secrets; print(secrets.token_hex(16))')/" server/server.py
 sed -i "s/port=4000/port=8021/" server/server.py
-sed -i "/localhost:4000/cs.catlin.edu:8021"
+sed -i "s/localhost:4000/cs.catlin.edu:8021/" public/game.js

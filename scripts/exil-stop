@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/merrilln/exil
+cd $EXIL_DIR
 kill $(cat server/server.pid)
 rm server/server.pid
 echo '[EXIL]' Server Stopped

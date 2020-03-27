@@ -2,6 +2,7 @@ from flask import Flask, send_file, request
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
+app.config.from_object('config.DevelopmentConfig')
 sio = SocketIO(app)
 
 @app.route('/')

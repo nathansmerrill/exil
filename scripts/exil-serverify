@@ -2,10 +2,10 @@
 
 cd $EXIL_DIR
 
+# Switch to production config
+sed -i "s/DevelopmentConfig/ProductionConfig/" server/server.py
 # Comment flask serving
 sed -ie "/@app.route('\/')/,+3 s/^/#/" server/exil.py
-# Generate new flask secret key
-sed -i "s/d89c947658f73ff238867e61dfce7626/$(python3 -c 'import secrets; print(secrets.token_hex(16))')/" server/exil.py
 # Serve on port 8021
 sed -i "s/port=4000/port=8021/" server/exil.py
 # Connect to port 8021

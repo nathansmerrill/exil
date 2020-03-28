@@ -1,8 +1,9 @@
 from flask import Flask, send_file, request
 from flask_socketio import SocketIO, emit
+from config import DevelopmentConfig
 
 app = Flask(__name__)
-app.config.from_object('config.DevelopmentConfig')
+app.config.from_object(DevelopmentConfig())
 sio = SocketIO(app)
 
 @app.route('/')

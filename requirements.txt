@@ -3,4 +3,3 @@ flask-socketio
 flask-pymongo
 flask-bcrypt
 eventlet
-pymongo

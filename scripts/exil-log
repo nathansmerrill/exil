@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd $EXIL_DIR
+
+less +F server/log/exil.log

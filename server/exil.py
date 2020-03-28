@@ -1,6 +1,8 @@
 #!/usr/bin/python3 -u
 from flask import Flask, send_file, request
 from flask_socketio import SocketIO, emit
+from datetime import datetime
+
 from config import DevelopmentConfig
 
 app = Flask(__name__)
@@ -16,14 +18,21 @@ def get(path='index.html'):
 
 @sio.on('connect')
 def connect():
-    print(f'[CONNECT] {request.sid} {request.remote_addr}')
+    sprint('connect', f'{request.sid} {request.remote_addr}')
 
 @sio.on('disconnect')
 def disconnect():
-    print(f'[DISCONNECT] {request.sid} {request.remote_addr}')
+    sprint('disconnect', f'{request.sid} {request.remote_addr}')
+
+def sprint(tag, text, timestamp=True):
+    out = f'[{tag.upper()}'
+    if timestamp:
+        out += f' {datetime.now().strftime("%d-%b-%Y %-I:%M:%S %p")}'
+    out += f'] {text}'
+    print(out)
 
 if __name__ == '__main__':
-    print(f'[SERVER] Initializing...')
+    sprint('server', 'Initializing...')
     players = {}
-    print(f'[SERVER] Starting web server on port {PORT}')
+    sprint('server', f'Starting web server on port {PORT}')
     sio.run(app, host='0.0.0.0', port=PORT)

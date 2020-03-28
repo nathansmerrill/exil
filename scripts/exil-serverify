@@ -3,7 +3,7 @@
 cd $EXIL_DIR
 
 # Switch to production config
-sed -i "s/DevelopmentConfig/ProductionConfig/" server/server.py
+sed -i "s/DevelopmentConfig/ProductionConfig/" server/exil.py
 # Comment flask serving
 sed -ie "/@app.route('\/')/,+3 s/^/#/" server/exil.py
 # Serve on port 8021

@@ -1,9 +1,10 @@
 #!/bin/bash
 
 cd $EXIL_DIR
-if [ -s server/server.pid ]; then
-	if ps -p $(cat server/server.pid) > /dev/null; then
-		echo '[EXIL]' Server running with pid $(cat server/server.pid)
+
+if [ -s server/log/exil.pid ]; then
+	if ps -p $(cat server/log/exil.pid) > /dev/null; then
+		echo '[EXIL]' Server running with pid $(cat server/log/exil.pid)
 	else
 		echo '[EXIL]' Server crashed
 	fi

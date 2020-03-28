@@ -1,0 +1,10 @@
+#!/bin/bash
+
+exil-stop
+cd /home/merrilln
+rm -rf exil
+git clone https://github.com/nathansmerrill/exil
+exil-serverify
+exil-start
+sleep 0.5
+exil-status

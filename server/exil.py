@@ -7,6 +7,8 @@ app = Flask(__name__)
 app.config.from_object(DevelopmentConfig())
 sio = SocketIO(app, cors_allowed_origins='*')
 
+PORT = 4000
+
 @app.route('/')
 @app.route('/<path:path>')
 def get(path='index.html'):
@@ -22,4 +24,6 @@ def disconnect():
 
 if __name__ == '__main__':
     print(f'[SERVER] Initializing...')
-    sio.run(app, host='0.0.0.0', port=4000)
+    players = {}
+    print(f'[SERVER] Starting web server on port {PORT}')
+    sio.run(app, host='0.0.0.0', port=PORT)

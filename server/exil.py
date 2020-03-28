@@ -1,3 +1,4 @@
+#!/usr/bin/python3 -u
 from flask import Flask, send_file, request
 from flask_socketio import SocketIO, emit
 from config import DevelopmentConfig
@@ -20,4 +21,5 @@ def disconnect():
     print(f'[DISCONNECT] {request.sid} {request.remote_addr}')
 
 if __name__ == '__main__':
+    print(f'[SERVER] Initializing...')
     sio.run(app, host='0.0.0.0', port=4000)

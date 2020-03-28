@@ -2,6 +2,6 @@
 
 cd $EXIL_DIR
 
-python3 server/exil.py 1>server/log/exil.log 2>&1 &
+server/exil.py 1>server/log/exil.log 2>&1 &
 echo $! > server/log/exil.pid
 echo '[EXIL]' Server Started

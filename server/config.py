@@ -1,6 +1,5 @@
 class Config(object):
     DEBUG = False
-    MONGO_URI = 'mongodb://localhost:27017/exil'
 
 class DevelopmentConfig(Config):
     SECRET_KEY = b'\xda9$\x9fL\x10\xce\x06`49\xac\x9ar\xeff\xc5K\xd4V\x16$\x16y'

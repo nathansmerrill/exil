@@ -1,3 +1,5 @@
+import * as THREE from '../lib/three.module.js';
+
 let socket = io.connect('http://localhost:4000');
 
 // ========== THREE.JS SETUP ==========
@@ -36,9 +38,6 @@ let inputs = {
 document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
 // document.addEventListener('mousemove', mouseMove, false);
-
-age = 14;
-console.log(`lmao test ${age}`);
 
 function update() {
     requestAnimationFrame(update);

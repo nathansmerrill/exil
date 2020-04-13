@@ -37,6 +37,9 @@ document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
 // document.addEventListener('mousemove', mouseMove, false);
 
+age = 14;
+console.log(`lmao test ${age}`);
+
 function update() {
     requestAnimationFrame(update);
 

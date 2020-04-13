@@ -10,3 +10,5 @@ sed -ie "/@app.route('\/')/,+3 s/^/#/" server/exil.py
 sed -i "s/PORT = 4000/PORT = 8021/" server/exil.py
 # Connect to port 8021
 sed -i "s/localhost:4000/exil.nathanm.cf:8021/" public/game.js
+# Run babel to compile to ES5
+yarn build

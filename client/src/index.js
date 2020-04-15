@@ -1,17 +1,11 @@
 import * as THREE from 'three';
+import PointerLockControls from "three-pointerlock";
 import io from 'socket.io-client';
 
 import {keyNames} from "./common";
 import './styles/main.css';
 
 const socket = io('http://localhost:4001');
-
-// ========== THREE.JS SETUP ==========
-let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-let renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
 
 // ========== FUNCTIONS ==========
 function keyDown(event) {
@@ -29,9 +23,17 @@ function keyUp(event) {
 }
 
 // ========== START ==========
-var geometry = new THREE.BoxGeometry();
-var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-var cube = new THREE.Mesh( geometry, material );
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+let renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+let controls = new PointerLockControls(camera, document.body);
+
+let geometry = new THREE.BoxGeometry();
+let material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+let cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 camera.position.z = 5;
 

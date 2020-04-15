@@ -1,0 +1,27 @@
+{
+    "name": "exil",
+    "version": "0.0.1",
+    "description": "A 3d multiplayer survival and combat game",
+    "main": "src/index.js",
+    "repository": "https://github.com/nathansmerrill/exil",
+    "author": "Nathan Merrill <mathiscool3000@gmail.com>",
+    "scripts": {
+        "start": "webpack-dev-server",
+        "build": "webpack"
+    },
+    "dependencies": {
+        "@babel/core": "^7.9.0",
+        "@babel/preset-env": "^7.9.5",
+        "babel-loader": "^8.1.0",
+        "css-loader": "^3.5.2",
+        "file-loader": "^6.0.0",
+        "html-loader": "^1.1.0",
+        "html-webpack-plugin": "^4.2.0",
+        "socket.io-client": "^2.3.0",
+        "style-loader": "^1.1.4",
+        "three": "^0.115.0",
+        "webpack": "^4.42.1",
+        "webpack-cli": "^3.3.11",
+        "webpack-dev-server": "^3.10.3"
+    }
+}

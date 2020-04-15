@@ -1,6 +1,10 @@
-import * as THREE from '../lib/three.module.js';
+import * as THREE from 'three';
+import io from 'socket.io-client';
 
-let socket = io.connect('http://localhost:4000');
+import {keyNames} from "./common";
+import './styles/main.css';
+
+const socket = io('http://localhost:4001');
 
 // ========== THREE.JS SETUP ==========
 let scene = new THREE.Scene();
@@ -14,12 +18,14 @@ function keyDown(event) {
     let key = keyNames[event.which];
     if (!inputs['keyboard'].includes(key)) {
         inputs['keyboard'].push(key);
+        console.log(inputs['keyboard']);
     }
 }
 
 function keyUp(event) {
     let key = keyNames[event.which];
     inputs['keyboard'] = inputs['keyboard'].filter(item => item !== key);
+    console.log(inputs['keyboard']);
 }
 
 // ========== START ==========

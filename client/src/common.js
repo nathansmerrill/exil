@@ -1,4 +1,4 @@
-let keyNames = {
+export const keyNames = {
     8: 'backspace',
     9: 'tab',
     13: 'enter',

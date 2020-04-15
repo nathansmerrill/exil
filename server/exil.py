@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.config.from_object(DevelopmentConfig())
 sio = SocketIO(app, cors_allowed_origins='*')
 
-PORT = 4000
+PORT = 4001
 
 class Player:
     def __init__(self, sid, x, y, z):
@@ -23,11 +23,6 @@ class Player:
             'mouseX': 0,
             'mouseY': 0
         }
-
-@app.route('/')
-@app.route('/<path:path>')
-def get(path='index.html'):
-    return send_file(f'../public/{path}')
 
 @sio.on('connect')
 def connect():

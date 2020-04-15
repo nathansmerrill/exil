@@ -1,10 +1,12 @@
 class Config(object):
-    DEBUG = False
+    pass
 
 class DevelopmentConfig(Config):
+    DEBUG = True
     SECRET_KEY = b'\xda9$\x9fL\x10\xce\x06`49\xac\x9ar\xeff\xc5K\xd4V\x16$\x16y'
 
 class ProductionConfig(Config):
+    DEBUG = False
     @property
     def SECRET_KEY(self):
         import sys

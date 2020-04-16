@@ -41,7 +41,7 @@ def disconnect():
 def sprint(tag, text, timestamp=True):
     out = f'[{tag.upper()}'
     if timestamp:
-        out += f' {datetime.now().strftime("%d-%b-%Y %-I:%M:%S %p")}'
+        out += f' {datetime.now().strftime("%d-%b-%Y %I:%M:%S %p")}'
     out += f'] {text}'
     print(out)
 

@@ -32,8 +32,10 @@ module.exports = {
             {
                 test: /\.(png|jpg|ico|webmanifest)$/,
                 use: [
-                    'file-loader'
-                ]
+                    {
+                        loader: 'file-loader'
+                    },
+                ],
             },
             {
                 test: /\.css$/,

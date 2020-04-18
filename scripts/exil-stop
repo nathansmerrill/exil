@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd $EXIL_DIR
+
+kill $(cat server/log/exil.pid)
+rm server/log/exil.pid
+echo '[EXIL]' Server Stopped

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd $EXIL_DIR
+
+server/exil.py 1>server/log/exil.log 2>&1 &
+echo $! > server/log/exil.pid
+echo '[EXIL]' Server Started
+sleep 0.5
+exil-status

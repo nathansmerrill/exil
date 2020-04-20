@@ -28,13 +28,7 @@ class Player:
         }
 
     def getDict(self):
-        return {
-            'sid': self.sid,
-            'xPos': self.x,
-            'yPos': self.y,
-            'zPos': self.z,
-            'inputs': self.inputs
-        }
+        return self.__dict__
 
 
 @app.route('/')
@@ -74,8 +68,10 @@ def sprint(tag, text, timestamp=True):
 def runGameLoop():
     while True:
         playersLock.acquire()
+        playersDict = {}
         for sid in players:
-            sio.emit('player', json.dumps(players[sid].getDict()))
+            playersDict[sid] = players[sid].getDict()
+        sio.emit('players', playersDict)
         playersLock.release()
 
 

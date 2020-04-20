@@ -107,13 +107,9 @@ socket.on('update',  function (data) {
     socket.emit('updateBack', data)
 });
 
-socket.on('player',  function (data) {
-    frameDataReceived++;
-    connection = ":CONNECTED?: (" + frameConnected + "." + frameDataReceived + " frames) data: "
-    let parsedData = JSON.parse(data);
-    if (parsedData['sid'] === socket.id) {
-        frameConnected++;
-        connection = ":CONNECTED: (" + frameConnected + " frames) data: "+ parsedData;
+socket.on('players',  function (data) {
+    for (let sid in data) {
+        console.log(data[sid])
     }
 });
 

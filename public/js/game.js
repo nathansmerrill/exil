@@ -7,7 +7,7 @@ function keyDown(event) {
     let key = keyNames[event.which];
     if (!inputs['keyboard'].includes(key)) {
         inputs['keyboard'].push(key);
-        console.log(inputs['keyboard'])
+        socket.emit('inputs', inputs);
     }
     if (key === 'enter') {
         lockPointer();
@@ -17,8 +17,9 @@ function keyDown(event) {
 function keyUp(event) {
     let key = keyNames[event.which];
     inputs['keyboard'] = inputs['keyboard'].filter(item => item !== key);
-    console.log(inputs['keyboard'])
+    socket.emit('inputs', inputs);
 }
+
 
 function mouseMove(event) {
 
@@ -38,6 +39,8 @@ function mouseMove(event) {
 
     camera.quaternion.setFromEuler( euler );
 
+    inputs['pitch'] = euler.x;
+    inputs['yaw'] = euler.y;
 }
 
 function mouseDown(event) {
@@ -84,13 +87,35 @@ let cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 camera.position.z = 5;
 
+let connection = ":NOT CONNECTED:";
+let socketStatus = "..."
+let frameConnected = 0;
+let frameDataReceived = 0;
+let frameDelay = 0;
+
 loadSkybox();
 
 let inputs = {
     'keyboard': [],
-    'mouseX': 0,
-    'mouseY': 0
+    'actions': [],
+    'pitch': 0,
+    'yaw': 0
 };
+
+socket.on('update',  function (data) {
+    console.log('update received!')
+    socket.emit('updateBack', data)
+});
+
+socket.on('player',  function (data) {
+    frameDataReceived++;
+    connection = ":CONNECTED?: (" + frameConnected + "." + frameDataReceived + " frames) data: "
+    let parsedData = JSON.parse(data);
+    if (parsedData['sid'] === socket.id) {
+        frameConnected++;
+        connection = ":CONNECTED: (" + frameConnected + " frames) data: "+ parsedData;
+    }
+});
 
 document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
@@ -101,6 +126,40 @@ document.addEventListener('pointerlockchange', pointerLockStatus, false);
 function update() {
     requestAnimationFrame(update);
 
+    document.getElementById("debugInfo").innerHTML = "==== DEBUG INFORMATION ==== <br> SID: " + socket.id + "<br> KEYBOARD: " + inputs['keyboard'] + "<br>CONNECTION: " + connection + "<br>SOCKET STATUS: " + socketStatus;
+
     renderer.render(scene, camera);
 }
 update();
+socket.on('connect', () => {
+    socketStatus = "Connected!"
+});
+
+
+socket.on('error', (error) => {
+    socketStatus = "ER " + error;
+});
+
+socket.on('disconnect', (reason) => {
+    socketStatus = "DC " + reason;
+});
+
+socket.on('reconnect', (attemptNumber) => {
+    socketStatus = "RC! " + attemptNumber;
+});
+
+socket.on('reconnect_attempt', (attemptNumber) => {
+    socketStatus = "RCA " + attemptNumber;
+});
+
+socket.on('reconnecting', (attemptNumber) => {
+    socketStatus = "RC " + attemptNumber;
+});
+
+socket.on('reconnect_error', (error) => {
+    socketStatus = "RE " + error;
+});
+
+socket.on('reconnect_failed', () => {
+    socketStatus = "Reconnect Failed"
+});

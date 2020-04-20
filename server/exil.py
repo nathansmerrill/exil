@@ -1,10 +1,12 @@
 #!/usr/bin/python3 -u
+import time
+
 from flask import Flask, send_file, request
 from flask_socketio import SocketIO, emit
 from threading import Thread, RLock
 from datetime import datetime
-
 from config import DevelopmentConfig
+import json, math
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig())
@@ -20,9 +22,20 @@ class Player:
         self.z = z
         self.inputs = {
             'keyboard': [],
-            'mouseX': 0,
-            'mouseY': 0
+            'actions': [],
+            'pitch': 0,
+            'yaw': 0
         }
+
+    def getDict(self):
+        return {
+            'sid': self.sid,
+            'xPos': self.x,
+            'yPos': self.y,
+            'zPos': self.z,
+            'inputs': self.inputs
+        }
+
 
 @app.route('/')
 @app.route('/<path:path>')
@@ -43,6 +56,13 @@ def disconnect():
     players.pop(request.sid)
     playersLock.release()
 
+
+@sio.on('inputs')
+def receiveInputs(inputs):
+    players[request.sid].inputs = inputs
+    print(inputs['keyboard'], '  ', players[request.sid].getDict())
+
+
 def sprint(tag, text, timestamp=True):
     out = f'[{tag.upper()}'
     if timestamp:
@@ -50,13 +70,14 @@ def sprint(tag, text, timestamp=True):
     out += f'] {text}'
     print(out)
 
+
 def runGameLoop():
     while True:
         playersLock.acquire()
         for sid in players:
-            # print(f'Running game loop on {sid}')
-            pass
+            sio.emit('player', json.dumps(players[sid].getDict()))
         playersLock.release()
+
 
 if __name__ == '__main__':
     sprint('server', 'Initializing...')

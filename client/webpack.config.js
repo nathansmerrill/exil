@@ -30,26 +30,21 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(png|jpg|ico|webmanifest)$/,
-                use: [
-                    {
-                        loader: 'file-loader'
-                    },
-                ],
-            },
-            {
                 test: /\.css$/,
                 use: [
                     'style-loader',
                     'css-loader'
                 ]
+            },
+            {
+                test: /\.(png|jpg|ico|webmanifest)$/,
+                use: 'url-loader'
             }
         ]
     },
     plugins: [
         new HtmlWebPackPlugin({
-            template: './src/index.html',
-            filename: './index.html'
+            template: 'src/index.html',
         })
     ],
     devServer: {

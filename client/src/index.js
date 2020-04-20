@@ -86,7 +86,7 @@ let inputs = {
 
 document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
-document.addEventListener('mousedown', mouseDown, false)
+document.addEventListener('mousedown', mouseDown, false);
 // document.addEventListener('mousemove', mouseMove, false);
 
 function update() {

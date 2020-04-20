@@ -68,10 +68,9 @@ def sprint(tag, text, timestamp=True):
 def runGameLoop():
     while True:
         playersLock.acquire()
-        playersDict = {}
         for sid in players:
-            playersDict[sid] = players[sid].getDict()
-        sio.emit('players', playersDict)
+            pass
+        sio.emit('players', [players[sid].getDict() for sid in players], broadcast=True)
         playersLock.release()
 
 

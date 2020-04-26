@@ -17,7 +17,8 @@ sio = SocketIO(app, async_mode=asyncMode, cors_allowed_origins='*')
 PORT = 4000
 
 gamerules = {
-    'PLAYERSPEED': 0.1
+    'PLAYER_SPEED': 0.1,
+    'PLAYER_STRAFE_MODIFIER': 0.7
 }
 
 class Player:
@@ -78,8 +79,17 @@ def runGameLoop():
         for sid in players:
             player = players[sid]
             if 'w' in player.inputs['keyboard']:
-                player.x += math.sin(player.inputs['yaw'] + math.pi) * gamerules['PLAYERSPEED']
-                player.z += math.cos(player.inputs['yaw'] + math.pi) * gamerules['PLAYERSPEED']
+                player.x += math.sin(player.inputs['yaw'] + math.pi) * gamerules['PLAYER_SPEED']
+                player.z += math.cos(player.inputs['yaw'] + math.pi) * gamerules['PLAYER_SPEED']
+            elif 's' in player.inputs['keyboard']:
+                player.x += math.sin(player.inputs['yaw']) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
+                player.z += math.cos(player.inputs['yaw']) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
+            if 'd' in player.inputs['keyboard']:
+                player.x += math.sin(player.inputs['yaw'] + math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
+                player.z += math.cos(player.inputs['yaw'] + math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
+            elif 'a' in player.inputs['keyboard']:
+                player.x += math.sin(player.inputs['yaw'] - math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
+                player.z += math.cos(player.inputs['yaw'] - math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
         sendPlayerDict = {}
         for sid in players:
             sendPlayerDict[sid] = players[sid].getDict()

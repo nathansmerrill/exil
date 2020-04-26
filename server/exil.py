@@ -3,16 +3,22 @@ import time
 
 from flask import Flask, send_file, request
 from flask_socketio import SocketIO, emit
-from threading import Thread, RLock
+from threading import Thread, RLock, Lock
 from datetime import datetime
 from config import DevelopmentConfig
 import json, math
 
+asyncMode = None
+
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig())
-sio = SocketIO(app, cors_allowed_origins='*')
+sio = SocketIO(app, async_mode=asyncMode, cors_allowed_origins='*')
 
 PORT = 4000
+
+gamerules = {
+    'PLAYERSPEED': 0.1
+}
 
 class Player:
     def __init__(self, sid, x, y, z):
@@ -67,12 +73,18 @@ def sprint(tag, text, timestamp=True):
 
 def runGameLoop():
     while True:
+        sio.sleep(0.01)
         playersLock.acquire()
         for sid in players:
-            pass
-        sio.emit('players', [players[sid].getDict() for sid in players], broadcast=True)
+            player = players[sid]
+            if 'w' in player.inputs['keyboard']:
+                player.x += math.sin(player.inputs['yaw'] + math.pi) * gamerules['PLAYERSPEED']
+                player.z += math.cos(player.inputs['yaw'] + math.pi) * gamerules['PLAYERSPEED']
+        sendPlayerDict = {}
+        for sid in players:
+            sendPlayerDict[sid] = players[sid].getDict()
+        sio.emit('players', sendPlayerDict, broadcast=True)
         playersLock.release()
-
 
 if __name__ == '__main__':
     sprint('server', 'Initializing...')
@@ -81,8 +93,7 @@ if __name__ == '__main__':
     playersLock = RLock()
 
     sprint('server', 'Initializing game loop...')
-    gameLoopThread = Thread(target=runGameLoop)
-    gameLoopThread.start()
+    gameLoopThread = sio.start_background_task(target=runGameLoop)
 
     sprint('server', f'Starting web server on port {PORT}')
     sio.run(app, host='0.0.0.0', port=PORT)

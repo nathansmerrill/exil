@@ -32,8 +32,8 @@ function mouseMove(event) {
 
     euler.setFromQuaternion( camera.quaternion );
 
-    euler.y -= movementX * 0.002;
-    euler.x -= movementY * 0.002;
+    euler.y -= movementX * 0.002; // yaw
+    euler.x -= movementY * 0.002; // pitch
 
     euler.x = Math.max( - Math.PI / 2, Math.min( Math.PI / 2, euler.x ) );
 
@@ -41,6 +41,8 @@ function mouseMove(event) {
 
     inputs['pitch'] = euler.x;
     inputs['yaw'] = euler.y;
+
+    socket.emit('inputs', inputs);
 }
 
 function mouseDown(event) {
@@ -87,11 +89,20 @@ let cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 camera.position.z = 5;
 
-let connection = ":NOT CONNECTED:";
-let socketStatus = "..."
-let frameConnected = 0;
-let frameDataReceived = 0;
-let frameDelay = 0;
+let globalPlayers = {}
+let globalPlayerObjects = {}
+
+let localPlayer = {
+    'x': 0,
+    'y': 0,
+    'z': 0,
+}
+
+let c = document.getElementById("uiCanvas");
+let ctx = c.getContext("2d");
+ctx.beginPath();
+ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+ctx.stroke();
 
 loadSkybox();
 
@@ -109,7 +120,20 @@ socket.on('update',  function (data) {
 
 socket.on('players',  function (data) {
     for (let sid in data) {
-        console.log(data[sid])
+        if (sid === socket.id) { // Received Data for Self
+            localPlayer.x = data[sid]['x'];
+            localPlayer.y = data[sid]['y'];
+            localPlayer.z = data[sid]['z'];
+        } else { // Received Data for Other Player
+            if (globalPlayers[sid] == null) { // Make Player Object
+                let plyGeometry = new THREE.BoxGeometry(1,1,1);
+                let plyMaterial = new THREE.MeshBasicMaterial({ color : 0xbbffbb });
+                globalPlayerObjects[sid] = new THREE.Mesh(plyGeometry, plyMaterial);
+                globalPlayerObjects[sid].name = sid;
+                scene.add(globalPlayerObjects[sid])
+            }
+            globalPlayers[sid] = data[sid]
+        }
     }
 });
 
@@ -122,40 +146,25 @@ document.addEventListener('pointerlockchange', pointerLockStatus, false);
 function update() {
     requestAnimationFrame(update);
 
-    document.getElementById("debugInfo").innerHTML = "==== DEBUG INFORMATION ==== <br> SID: " + socket.id + "<br> KEYBOARD: " + inputs['keyboard'] + "<br>CONNECTION: " + connection + "<br>SOCKET STATUS: " + socketStatus;
+    camera.position.x = localPlayer.x;
+    camera.position.y = localPlayer.y;
+    camera.position.z = localPlayer.z;
+
+    for (let sid in globalPlayers) {
+        if (globalPlayerObjects[sid] != null) {
+            let pos = new THREE.Vector3(globalPlayers[sid]['x'], globalPlayers[sid]['y'], globalPlayers[sid]['z']);
+            globalPlayerObjects[sid].position.x = pos.x;
+            globalPlayerObjects[sid].position.y = pos.y;
+            globalPlayerObjects[sid].position.z = pos.z;
+            let rotEuler = new THREE.Euler( 0, 0, 0, 'YXZ');
+            rotEuler.x = globalPlayers[sid]['inputs']['pitch'];
+            rotEuler.y = globalPlayers[sid]['inputs']['yaw'];
+            globalPlayerObjects[sid].quaternion.setFromEuler(rotEuler);
+            console.log (globalPlayerObjects[sid]);
+            console.log (pos);
+        }
+    }
 
     renderer.render(scene, camera);
 }
 update();
-socket.on('connect', () => {
-    socketStatus = "Connected!"
-});
-
-
-socket.on('error', (error) => {
-    socketStatus = "ER " + error;
-});
-
-socket.on('disconnect', (reason) => {
-    socketStatus = "DC " + reason;
-});
-
-socket.on('reconnect', (attemptNumber) => {
-    socketStatus = "RC! " + attemptNumber;
-});
-
-socket.on('reconnect_attempt', (attemptNumber) => {
-    socketStatus = "RCA " + attemptNumber;
-});
-
-socket.on('reconnecting', (attemptNumber) => {
-    socketStatus = "RC " + attemptNumber;
-});
-
-socket.on('reconnect_error', (error) => {
-    socketStatus = "RE " + error;
-});
-
-socket.on('reconnect_failed', () => {
-    socketStatus = "Reconnect Failed"
-});

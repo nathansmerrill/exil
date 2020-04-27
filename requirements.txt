@@ -1,3 +1,6 @@
-flask
+flask~=1.0.2
 flask-socketio
 eventlet
+
+noise~=1.2.2
+config~=0.5.0.post0

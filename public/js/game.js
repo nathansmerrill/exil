@@ -89,6 +89,12 @@ let cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 camera.position.z = 5;
 
+let waterPlane = new THREE.PlaneGeometry(10000,10000);
+let waterMaterial = new THREE.MeshBasicMaterial( {transparent:true, color:0x86caed, opacity:0.8} );
+let water = new THREE.Mesh(waterPlane, waterMaterial);
+scene.add( water );
+water.quaternion.setFromEuler(new THREE.Euler(- Math.PI / 2, 0, 0, 'YXZ'));
+
 let globalPlayers = {}
 let globalPlayerObjects = {}
 
@@ -101,7 +107,7 @@ let localPlayer = {
 let c = document.getElementById("uiCanvas");
 let ctx = c.getContext("2d");
 ctx.beginPath();
-ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+ctx.arc(95, 50, 40, 0, 4 * Math.PI);
 ctx.stroke();
 
 loadSkybox();

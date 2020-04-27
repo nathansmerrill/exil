@@ -1,12 +1,15 @@
 #!/usr/bin/python3 -u
-import time
 
-from flask import Flask, send_file, request
-from flask_socketio import SocketIO, emit
-from threading import Thread, RLock, Lock
+import math
 from datetime import datetime
+from threading import RLock
+
+import noise
 from config import DevelopmentConfig
-import json, math
+from flask import Flask, send_file, request
+from flask_socketio import SocketIO
+
+help(noise)
 
 asyncMode = None
 
@@ -90,11 +93,38 @@ def runGameLoop():
             elif 'a' in player.inputs['keyboard']:
                 player.x += math.sin(player.inputs['yaw'] - math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
                 player.z += math.cos(player.inputs['yaw'] - math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
+            player.y = 2
         sendPlayerDict = {}
         for sid in players:
             sendPlayerDict[sid] = players[sid].getDict()
         sio.emit('players', sendPlayerDict, broadcast=True)
         playersLock.release()
+
+noiseOctaves = [
+    {
+        'freq': 0.0001,
+        'amp': 3000,
+        'zDepth': 0,
+    },
+    {
+        'freq': 0.0005,
+        'amp': 1000,
+        'zDepth': 1000,
+    },
+    {
+        'freq': 0.001,
+        'amp': 250,
+        'zDepth': 2000,
+    }
+]
+
+
+def getHeightMapAtPoint(x, y):
+    h = 0
+    for octave in noiseOctaves:
+        h += (noise.snoise3(x * octave['freq'], y * octave['freq'], octave['zDepth']) * octave['amp'])
+    print(f"Noise[{x},{y}]: {h}")
+
 
 if __name__ == '__main__':
     sprint('server', 'Initializing...')

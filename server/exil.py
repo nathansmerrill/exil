@@ -74,7 +74,6 @@ def sprint(tag, text, timestamp=True):
     out += f'] {text}'
     print(out)
 
-
 def runGameLoop():
     while True:
         sio.sleep(0.01)

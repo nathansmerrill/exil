@@ -5,8 +5,8 @@ let inGame = false;
 
 function keyDown(event) {
     let key = keyNames[event.which];
-    if (!inputs['keyboard'].includes(key)) {
-        inputs['keyboard'].push(key);
+    if (!inputs.keyboard.includes(key)) {
+        inputs.keyboard.push(key);
         socket.emit('inputs', inputs);
     }
     if (key === 'enter') {
@@ -16,7 +16,7 @@ function keyDown(event) {
 
 function keyUp(event) {
     let key = keyNames[event.which];
-    inputs['keyboard'] = inputs['keyboard'].filter(item => item !== key);
+    inputs.keyboard = inputs.keyboard.filter(item => item !== key);
     socket.emit('inputs', inputs);
 }
 
@@ -39,8 +39,8 @@ function mouseMove(event) {
 
     camera.quaternion.setFromEuler( euler );
 
-    inputs['pitch'] = euler.x;
-    inputs['yaw'] = euler.y;
+    inputs.pitch = euler.x;
+    inputs.yaw = euler.y;
 
     socket.emit('inputs', inputs);
 }
@@ -95,14 +95,14 @@ let water = new THREE.Mesh(waterPlane, waterMaterial);
 scene.add( water );
 water.quaternion.setFromEuler(new THREE.Euler(- Math.PI / 2, 0, 0, 'YXZ'));
 
-let globalPlayers = {}
-let globalPlayerObjects = {}
+let globalPlayers = {};
+let globalPlayerObjects = {};
 
 let localPlayer = {
-    'x': 0,
-    'y': 0,
-    'z': 0,
-}
+    x: 0,
+    y: 0,
+    z: 0,
+};
 
 let c = document.getElementById("uiCanvas");
 let ctx = c.getContext("2d");
@@ -113,32 +113,27 @@ ctx.stroke();
 loadSkybox();
 
 let inputs = {
-    'keyboard': [],
-    'actions': [],
-    'pitch': 0,
-    'yaw': 0
+    keyboard: [],
+    actions: [],
+    pitch: 0,
+    yaw: 0
 };
-
-socket.on('update',  function (data) {
-    console.log('update received!')
-    socket.emit('updateBack', data)
-});
 
 socket.on('players',  function (data) {
     for (let sid in data) {
         if (sid === socket.id) { // Received Data for Self
-            localPlayer.x = data[sid]['x'];
-            localPlayer.y = data[sid]['y'];
-            localPlayer.z = data[sid]['z'];
+            localPlayer.x = data[sid].x;
+            localPlayer.y = data[sid].y;
+            localPlayer.z = data[sid].z;
         } else { // Received Data for Other Player
             if (globalPlayers[sid] == null) { // Make Player Object
                 let plyGeometry = new THREE.BoxGeometry(1,1,1);
                 let plyMaterial = new THREE.MeshBasicMaterial({ color : 0xbbffbb });
                 globalPlayerObjects[sid] = new THREE.Mesh(plyGeometry, plyMaterial);
                 globalPlayerObjects[sid].name = sid;
-                scene.add(globalPlayerObjects[sid])
+                scene.add(globalPlayerObjects[sid]);
             }
-            globalPlayers[sid] = data[sid]
+            globalPlayers[sid] = data[sid];
         }
     }
 });
@@ -157,17 +152,17 @@ function update() {
     camera.position.z = localPlayer.z;
 
     for (let sid in globalPlayers) {
-        if (globalPlayerObjects[sid] != null) {
-            let pos = new THREE.Vector3(globalPlayers[sid]['x'], globalPlayers[sid]['y'], globalPlayers[sid]['z']);
+        if (globalPlayerObjects[sid] !== null) {
+            let pos = new THREE.Vector3(globalPlayers[sid].x, globalPlayers[sid].y, globalPlayers[sid].z);
             globalPlayerObjects[sid].position.x = pos.x;
             globalPlayerObjects[sid].position.y = pos.y;
             globalPlayerObjects[sid].position.z = pos.z;
             let rotEuler = new THREE.Euler( 0, 0, 0, 'YXZ');
-            rotEuler.x = globalPlayers[sid]['inputs']['pitch'];
-            rotEuler.y = globalPlayers[sid]['inputs']['yaw'];
+            rotEuler.x = globalPlayers[sid].inputs.pitch;
+            rotEuler.y = globalPlayers[sid].inputs.yaw;
             globalPlayerObjects[sid].quaternion.setFromEuler(rotEuler);
-            console.log (globalPlayerObjects[sid]);
-            console.log (pos);
+            console.log(globalPlayerObjects[sid]);
+            console.log(pos);
         }
     }
 

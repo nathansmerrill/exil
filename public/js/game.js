@@ -20,7 +20,6 @@ function keyUp(event) {
     socket.emit('inputs', inputs);
 }
 
-
 function mouseMove(event) {
 
     if (!inGame) { return; }

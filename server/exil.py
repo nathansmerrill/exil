@@ -9,20 +9,14 @@ from config import DevelopmentConfig
 from flask import Flask, send_file, request
 from flask_socketio import SocketIO
 
-help(noise)
-
-asyncMode = None
-
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig())
-sio = SocketIO(app, async_mode=asyncMode, cors_allowed_origins='*')
+sio = SocketIO(app, cors_allowed_origins='*')
 
 PORT = 4000
 
-gamerules = {
-    'PLAYER_SPEED': 0.1,
-    'PLAYER_STRAFE_MODIFIER': 0.7
-}
+PLAYER_SPEED = 0.1
+PLAYER_STRAFE_MODIFIER = 0.7
 
 class Player:
     def __init__(self, sid, x, y, z):
@@ -39,7 +33,6 @@ class Player:
 
     def getDict(self):
         return self.__dict__
-
 
 @app.route('/')
 @app.route('/<path:path>')
@@ -60,12 +53,9 @@ def disconnect():
     players.pop(request.sid)
     playersLock.release()
 
-
 @sio.on('inputs')
 def receiveInputs(inputs):
     players[request.sid].inputs = inputs
-    print(inputs['keyboard'], '  ', players[request.sid].getDict())
-
 
 def sprint(tag, text, timestamp=True):
     out = f'[{tag.upper()}'
@@ -81,17 +71,17 @@ def runGameLoop():
         for sid in players:
             player = players[sid]
             if 'w' in player.inputs['keyboard']:
-                player.x += math.sin(player.inputs['yaw'] + math.pi) * gamerules['PLAYER_SPEED']
-                player.z += math.cos(player.inputs['yaw'] + math.pi) * gamerules['PLAYER_SPEED']
+                player.x += math.sin(player.inputs['yaw'] + math.pi) * PLAYER_SPEED
+                player.z += math.cos(player.inputs['yaw'] + math.pi) * PLAYER_SPEED
             elif 's' in player.inputs['keyboard']:
-                player.x += math.sin(player.inputs['yaw']) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
-                player.z += math.cos(player.inputs['yaw']) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
+                player.x += math.sin(player.inputs['yaw']) * PLAYER_SPEED * PLAYER_STRAFE_MODIFIER
+                player.z += math.cos(player.inputs['yaw']) * PLAYER_SPEED * PLAYER_STRAFE_MODIFIER
             if 'd' in player.inputs['keyboard']:
-                player.x += math.sin(player.inputs['yaw'] + math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
-                player.z += math.cos(player.inputs['yaw'] + math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
+                player.x += math.sin(player.inputs['yaw'] + math.pi / 2) * PLAYER_SPEED * PLAYER_STRAFE_MODIFIER
+                player.z += math.cos(player.inputs['yaw'] + math.pi / 2) * PLAYER_SPEED * PLAYER_STRAFE_MODIFIER
             elif 'a' in player.inputs['keyboard']:
-                player.x += math.sin(player.inputs['yaw'] - math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
-                player.z += math.cos(player.inputs['yaw'] - math.pi / 2) * gamerules['PLAYER_SPEED'] * gamerules['PLAYER_STRAFE_MODIFIER']
+                player.x += math.sin(player.inputs['yaw'] - math.pi / 2) * PLAYER_SPEED * PLAYER_STRAFE_MODIFIER
+                player.z += math.cos(player.inputs['yaw'] - math.pi / 2) * PLAYER_SPEED * PLAYER_STRAFE_MODIFIER
             player.y = 2
         sendPlayerDict = {}
         for sid in players:
@@ -117,13 +107,11 @@ noiseOctaves = [
     }
 ]
 
-
 def getHeightMapAtPoint(x, y):
     h = 0
     for octave in noiseOctaves:
         h += (noise.snoise3(x * octave['freq'], y * octave['freq'], octave['zDepth']) * octave['amp'])
     print(f"Noise[{x},{y}]: {h}")
-
 
 if __name__ == '__main__':
     sprint('server', 'Initializing...')

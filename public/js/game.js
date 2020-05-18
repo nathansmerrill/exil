@@ -109,6 +109,7 @@ ctx.beginPath();
 ctx.arc(95, 50, 40, 0, 4 * Math.PI);
 ctx.stroke();
 
+
 loadSkybox();
 
 let inputs = {
@@ -137,6 +138,42 @@ socket.on('players',  function (data) {
     }
 });
 
+let chunks = []
+
+function checkIfChunkExists(x, y) {
+    for (let chunk of chunks) {
+        if (chunk.x === x && chunk.y === y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+socket.on('chunks',  function (data) {
+    if (!checkIfChunkExists(0, 0)) {
+        let chunkGeo = new THREE.PlaneGeometry(50, 50, 49, 49);
+        let chunkVertices = chunkGeo.vertices;
+        for (let xh = 0; xh < 50; xh++) {
+            for (let yh = 0; yh < 50; yh++) {
+                chunkVertices[xh * 50 + yh].z = data.data[xh * 50 + yh]
+            }
+        }
+        chunkGeo.vertices = chunkVertices;
+        let chunkMaterial = new THREE.MeshBasicMaterial({transparent: true, color: 0x000000, opacity: 0.8});
+        chunkMaterial.side = THREE.DoubleSide;
+        let chunk = new THREE.Mesh(chunkGeo, chunkMaterial);
+        scene.add(chunk);
+        chunk.position.x -= 25;
+        chunk.position.z -= 25;
+        chunk.quaternion.setFromEuler(new THREE.Euler(- Math.PI / 2, Math.PI, 0, 'YXZ'));
+        chunks.push({
+            x: 0,
+            y: 0,
+            instance: chunk,
+        })
+    }
+});
+
 document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
 document.addEventListener('mousedown', mouseDown, false);
@@ -144,6 +181,7 @@ document.addEventListener('mousemove', mouseMove, false);
 document.addEventListener('pointerlockchange', pointerLockStatus, false);
 
 function update() {
+    ctx.clearRect(0, 0, c.width, c.height);
     requestAnimationFrame(update);
 
     camera.position.x = localPlayer.x;
@@ -160,11 +198,14 @@ function update() {
             rotEuler.x = globalPlayers[sid].inputs.pitch;
             rotEuler.y = globalPlayers[sid].inputs.yaw;
             globalPlayerObjects[sid].quaternion.setFromEuler(rotEuler);
-            console.log(globalPlayerObjects[sid]);
-            console.log(pos);
         }
     }
+    c.width = innerWidth;
+    c.height = innerHeight;
+    ctx.font = "10px Arial";
+    ctx.fillText("Player Position (XYZ): " + camera.position.x + " / " + camera.position.y + " / " + camera.position.z, 10, 50);
 
     renderer.render(scene, camera);
+
 }
 update();

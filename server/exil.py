@@ -17,6 +17,7 @@ PORT = 4000
 
 PLAYER_SPEED = 0.1
 PLAYER_STRAFE_MODIFIER = 0.7
+RENDER_DISTANCE = 8
 
 class Player:
     def __init__(self, sid, x, y, z):
@@ -33,6 +34,20 @@ class Player:
 
     def getDict(self):
         return self.__dict__
+
+class Chunk:
+    def __init__(self, x, z): # X and Z are CHUNK COORDINATES, not 3D COORDINATES
+        self.x = x
+        self.z = z
+        self.data = {}
+        self.obj = {} # <-- to be used for models LATER!
+        for xh in range(0, 50):
+            for yh in range(0, 50):
+                self.data[xh * 50 + yh] = getHeightMapAtPoint(x * 50 + xh, z * 50 + yh)
+
+    def getDict(self):
+        return self.__dict__
+
 
 @app.route('/')
 @app.route('/<path:path>')
@@ -68,7 +83,7 @@ def runGameLoop():
     while True:
         sio.sleep(0.01)
         playersLock.acquire()
-        for sid in players:
+        for sid in players: # 1: SEND PLAYER DATA OUT
             player = players[sid]
             if 'w' in player.inputs['keyboard']:
                 player.x += math.sin(player.inputs['yaw'] + math.pi) * PLAYER_SPEED
@@ -82,28 +97,21 @@ def runGameLoop():
             elif 'a' in player.inputs['keyboard']:
                 player.x += math.sin(player.inputs['yaw'] - math.pi / 2) * PLAYER_SPEED * PLAYER_STRAFE_MODIFIER
                 player.z += math.cos(player.inputs['yaw'] - math.pi / 2) * PLAYER_SPEED * PLAYER_STRAFE_MODIFIER
-            player.y = 2
+            player.y = getHeightMapAtPoint(player.x, player.y) + 1.8
         sendPlayerDict = {}
         for sid in players:
             sendPlayerDict[sid] = players[sid].getDict()
         sio.emit('players', sendPlayerDict, broadcast=True)
+        for sid in players:
+            sio.emit('chunks', Chunk(0, 0).getDict(), broadcast=True)
         playersLock.release()
 
 noiseOctaves = [
+
     {
-        'freq': 0.0001,
-        'amp': 3000,
-        'zDepth': 0,
-    },
-    {
-        'freq': 0.0005,
-        'amp': 1000,
-        'zDepth': 1000,
-    },
-    {
-        'freq': 0.001,
-        'amp': 250,
-        'zDepth': 2000,
+        'freq': 0.005,
+        'amp': 100,
+        'zDepth': 100,
     }
 ]
 
@@ -111,7 +119,7 @@ def getHeightMapAtPoint(x, y):
     h = 0
     for octave in noiseOctaves:
         h += (noise.snoise3(x * octave['freq'], y * octave['freq'], octave['zDepth']) * octave['amp'])
-    print(f"Noise[{x},{y}]: {h}")
+    return h
 
 if __name__ == '__main__':
     sprint('server', 'Initializing...')

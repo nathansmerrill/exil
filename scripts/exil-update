@@ -1,8 +1,8 @@
 #!/bin/bash
 
 exil-stop
-cd /home/merrilln
-rm -rf exil
-git clone https://github.com/nathansmerrill/exil
+cd $EXIL_DIR
+git reset --HARD
+git pull
 exil-serverify
 exil-start

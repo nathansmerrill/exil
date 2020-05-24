@@ -3,11 +3,13 @@
 from flask import Flask, request
 from flask_socketio import SocketIO
 import mysql.connector
+from dotenv import load_dotenv
 # import noise
 
 from datetime import datetime
 from threading import RLock
 
+load_dotenv()
 app = Flask(__name__)
 app.config.from_object('config.DevelopmentConfig')
 sio = SocketIO(app, cors_allowed_origins='*')

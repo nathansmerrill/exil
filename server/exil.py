@@ -2,6 +2,7 @@
 
 from flask import Flask, request
 from flask_socketio import SocketIO
+import mysql.connector
 # import noise
 
 # import math
@@ -11,6 +12,13 @@ from threading import RLock
 app = Flask(__name__)
 app.config.from_object('config.DevelopmentConfig')
 sio = SocketIO(app, cors_allowed_origins='*')
+db = mysql.connector.connect(
+    host=app.config['MYSQL_HOST'],
+    user=app.config['MYSQL_USER'],
+    password=app.config['MYSQL_PASSWORD'],
+    database=app.config['MYSQL_DATABASE']
+)
+cursor = db.cursor()
 
 class Player:
     def __init__(self, sid, x, y, z):

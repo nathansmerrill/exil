@@ -1,16 +1,16 @@
 #!/usr/bin/python3 -u
-from flask import Flask, send_file, request
-from flask_socketio import SocketIO, emit
-from threading import Thread, RLock
-from datetime import datetime
 
-from config import DevelopmentConfig
+from flask import Flask, request
+from flask_socketio import SocketIO
+# import noise
+
+# import math
+from datetime import datetime
+from threading import RLock
 
 app = Flask(__name__)
-app.config.from_object(DevelopmentConfig())
+app.config.from_object('config.DevelopmentConfig')
 sio = SocketIO(app, cors_allowed_origins='*')
-
-PORT = 4001
 
 class Player:
     def __init__(self, sid, x, y, z):
@@ -20,9 +20,13 @@ class Player:
         self.z = z
         self.inputs = {
             'keyboard': [],
-            'mouseX': 0,
-            'mouseY': 0
+            'actions': [],
+            'pitch': 0,
+            'yaw': 0
         }
+
+    def getDict(self):
+        return self.__dict__
 
 @sio.on('connect')
 def connect():
@@ -34,9 +38,9 @@ def connect():
 @sio.on('disconnect')
 def disconnect():
     sprint('disconnect', f'{request.sid} {request.remote_addr}')
-    playersLock.acquire()
-    players.pop(request.sid)
-    playersLock.release()
+    # playersLock.acquire()
+    # players.pop(request.sid)
+    # playersLock.release()
 
 def sprint(tag, text, timestamp=True):
     out = f'[{tag.upper()}'
@@ -47,11 +51,15 @@ def sprint(tag, text, timestamp=True):
 
 def runGameLoop():
     while True:
-        playersLock.acquire()
-        for sid in players:
-            # print(f'Running game loop on {sid}')
-            pass
-        playersLock.release()
+        sio.sleep(0.01)
+        # playersLock.acquire()
+        # for sid in players:
+        #     player = players[sid]
+        # sendPlayerDict = {}
+        # for sid in players:
+        #     sendPlayerDict[sid] = players[sid].getDict()
+        # sio.emit('players', sendPlayerDict, broadcast=True)
+        # playersLock.release()
 
 if __name__ == '__main__':
     sprint('server', 'Initializing...')
@@ -60,8 +68,8 @@ if __name__ == '__main__':
     playersLock = RLock()
 
     sprint('server', 'Initializing game loop...')
-    gameLoopThread = Thread(target=runGameLoop)
-    gameLoopThread.start()
+    gameLoopThread = sio.start_background_task(target=runGameLoop)
 
+    PORT = app.config['PORT']
     sprint('server', f'Starting web server on port {PORT}')
     sio.run(app, host='0.0.0.0', port=PORT)

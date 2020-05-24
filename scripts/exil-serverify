@@ -2,13 +2,10 @@
 
 cd $EXIL_DIR
 
-# Switch to production config
+# Switch to production config for client and server
 sed -i "s/DevelopmentConfig/ProductionConfig/" server/exil.py
-# Serve on port 8021
-sed -i "s/PORT = 4001/PORT = 8021/" server/exil.py
-# Connect to port 8021
-sed -i "s/localhost:4001/exil.nathanm.cf:8021/" client/src/index.js
-# Webpack build
+sed -i "s/export default devConfig/export default prodConfig/" client/src/config.js
+# Parcel build
 cd client
-yarn install
+yarn install --production
 yarn build

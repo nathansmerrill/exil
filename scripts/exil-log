@@ -2,4 +2,4 @@
 
 cd $EXIL_DIR
 
-less +F server/log/exil.log
+less +F log/exil-server.log

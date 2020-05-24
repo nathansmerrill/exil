@@ -2,8 +2,8 @@
 
 cd $EXIL_DIR
 
-server/exil.py 1>server/log/exil.log 2>&1 &
-echo $! > server/log/exil.pid
+server/exil.py 1>log/exil-server.log 2>&1 &
+echo $! > log/exil-server.pid
 echo '[EXIL]' Server Started
 sleep 0.5
 exil-status

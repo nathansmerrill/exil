@@ -2,6 +2,6 @@
 
 cd $EXIL_DIR
 
-kill $(cat server/log/exil.pid)
-rm server/log/exil.pid
+kill $(cat log/exil-server.pid)
+rm log/exil-server.pid
 echo '[EXIL]' Server Stopped

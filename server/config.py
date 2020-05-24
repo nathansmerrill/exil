@@ -5,7 +5,7 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SECRET_KEY = b'\xda9$\x9fL\x10\xce\x06`49\xac\x9ar\xeff\xc5K\xd4V\x16$\x16y'
+    SECRET_KEY = '8c5014adb541158724ee9c580e9699bc892d7f79bed24d98'
     PORT = 5000
 
 class ProductionConfig(Config):

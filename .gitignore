@@ -32,5 +32,7 @@ node_modules
 # Packaging
 dist
 
-# Custom
+# Secret
+.env
 
+# Custom

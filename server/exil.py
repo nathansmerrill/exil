@@ -5,7 +5,6 @@ from flask_socketio import SocketIO
 import mysql.connector
 # import noise
 
-# import math
 from datetime import datetime
 from threading import RLock
 

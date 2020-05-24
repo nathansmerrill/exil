@@ -12,8 +12,6 @@ app = Flask(__name__)
 app.config.from_object('config.DevelopmentConfig')
 sio = SocketIO(app, cors_allowed_origins='*')
 
-print(f'SECRET KEY: {app.config["SECRET_KEY"]}')
-
 class Player:
     def __init__(self, sid, x, y, z):
         self.sid = sid

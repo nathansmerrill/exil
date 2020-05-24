@@ -40,6 +40,8 @@ class Player:
 @sio.on('connect')
 def connect():
     sprint('connect', f'{request.sid} {request.remote_addr}')
+    print(app.config['MYSQL_HOST'])
+    print(app.config['MYSQL_PASSWORD'])
     playersLock.acquire()
     players[request.sid] = Player(request.sid, 0, 0, 0)
     playersLock.release()

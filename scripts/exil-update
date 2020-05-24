@@ -2,7 +2,7 @@
 
 exil-stop
 cd $EXIL_DIR
-git reset --HARD
+git reset --hard
 git pull
 exil-serverify
 exil-start

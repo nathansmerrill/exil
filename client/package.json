@@ -12,6 +12,6 @@
         "parcel-plugin-clean-dist": "^0.0.6",
         "parcel-plugin-static-files-copy": "^2.3.1",
         "socket.io-client": "^2.3.0",
-        "three": "^0.116.1"
+        "three": "^0.137.0"
     }
 }
